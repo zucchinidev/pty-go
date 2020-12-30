@@ -12,8 +12,14 @@ func main() {
 	_, _ = fmt.Fprint(w, "Some welcome message\n")
 	for {
 		s.Scan()
-		_, _ = fmt.Fprint(w, "You wrote \"")
-		_, _ = w.Write(s.Bytes())
-		_, _ = fmt.Fprint(w, "\"\n")
+		command := s.Bytes()
+		if exit(command) {
+			os.Exit(0)
+		}
+		_, _ = fmt.Fprintf(w, "You wrote %q\n", command)
 	}
+}
+
+func exit(command []byte) bool {
+	return string(command) == "exit"
 }
