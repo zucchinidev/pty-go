@@ -1,13 +1,14 @@
-package cmd
+package commands
 
 import (
 	"fmt"
 	"io"
 	"math/rand"
+	"pty-go/basicPTY/color"
 	"pty-go/basicPTY/printer"
 )
 
-func printFile() Cmd {
+func shuffle() Cmd {
 	return Cmd{
 		Name: "pf",
 		Help: "Shuffle the arguments given",
@@ -17,7 +18,14 @@ func printFile() Cmd {
 				if i > 0 {
 					printer.Print(w, " ")
 				}
-				printer.Print(w, "%s", args[i])
+
+				var f func(w io.Writer, format string, args ...interface{})
+				f = color.Green.Colour
+				if i%2 == 0 {
+					f = color.Red.Colour
+				}
+
+				f(w, "%s", args[i])
 			}
 			_, _ = fmt.Fprintln(w)
 			return nil

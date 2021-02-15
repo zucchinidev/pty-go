@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"pty-go/basicPTY/printer"
 )
 
-func shuffle() Cmd {
+func printFile() Cmd {
 	return Cmd{
 		Name: "sf",
 		Help: "Shows the content of a file, we need the path",
