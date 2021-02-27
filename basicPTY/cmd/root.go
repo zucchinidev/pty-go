@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"github.com/agnivade/levenshtein"
 	"io"
 	"os"
 	"pty-go/basicPTY/commands"
 	coreErrors "pty-go/basicPTY/errors"
 	"pty-go/basicPTY/printer"
 	"pty-go/basicPTY/scanner"
+	"strings"
 )
 
 func Run() {
@@ -48,7 +50,19 @@ func Run() {
 			}
 		}
 		if !found {
+			var list []string
+			for _, availableCmd := range availableCommands {
+				distance := levenshtein.ComputeDistance(availableCmd.Name, desiredCmd)
+				if distance < 3 {
+					list = append(list, availableCmd.Name)
+				}
+			}
+
 			printer.Print(w, "%q not found. Use `help` for available commands\n", desiredCmd)
+
+			if len(list) > 0 {
+				printer.Print(w, "Maybe you meant: %s\n", strings.Join(list, ", "))
+			}
 		}
 	}
 }
