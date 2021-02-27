@@ -5,6 +5,12 @@ import (
 	"io"
 )
 
+type ArgsScanner interface {
+	Len() int
+	Args() []string
+	CMD() string
+}
+
 type argsScanner []string
 
 func NewArgsScanner() *argsScanner {

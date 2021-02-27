@@ -4,15 +4,16 @@ import (
 	"io"
 	"pty-go/basicPTY/errors"
 	"pty-go/basicPTY/printer"
+	"pty-go/basicPTY/scanner"
 )
 
-func exit() Cmd {
-	return Cmd{
+func init() {
+	_ = Register(Base{
 		Name: "exit",
 		Help: "Program ends",
-		Action: func(w io.Writer, args ...string) error {
-			printer.Print(w, "Goodbye!! :)")
+		Action: func(input io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+			printer.Print(output, "Goodbye!! :)")
 			return errors.NewExitError(0)
 		},
-	}
+	})
 }

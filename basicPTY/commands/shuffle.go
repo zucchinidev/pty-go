@@ -6,29 +6,33 @@ import (
 	"math/rand"
 	"pty-go/basicPTY/color"
 	"pty-go/basicPTY/printer"
+	"pty-go/basicPTY/scanner"
 )
 
-func shuffle() Cmd {
-	return Cmd{
-		Name: "pf",
-		Help: "Shuffle the arguments given",
-		Action: func(w io.Writer, args ...string) error {
-			rand.Shuffle(len(args), func(i, j int) { args[i], args[j] = args[j], args[i] })
-			for i := range args {
-				if i > 0 {
-					printer.Print(w, " ")
-				}
+func init() {
+	_ = Register(Base{
+		Name:   "pf",
+		Help:   "Shuffle the arguments given",
+		Action: shuffleParams,
+	})
+}
 
-				var f func(w io.Writer, format string, args ...interface{})
-				f = color.Green.Colour
-				if i%2 == 0 {
-					f = color.Red.Colour
-				}
+func shuffleParams(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+	args := scanner.Args()
+	rand.Shuffle(len(args), func(i, j int) { args[i], args[j] = args[j], args[i] })
+	for i := range args {
+		if i > 0 {
+			printer.Print(output, " ")
+		}
 
-				f(w, "%s", args[i])
-			}
-			_, _ = fmt.Fprintln(w)
-			return nil
-		},
+		var f func(w io.Writer, format string, args ...interface{})
+		f = color.Green.Colour
+		if i%2 == 0 {
+			f = color.Red.Colour
+		}
+
+		f(output, "%s", args[i])
 	}
+	_, _ = fmt.Fprintln(output)
+	return nil
 }

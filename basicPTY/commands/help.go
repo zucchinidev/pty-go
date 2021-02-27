@@ -3,18 +3,19 @@ package commands
 import (
 	"io"
 	"pty-go/basicPTY/printer"
+	"pty-go/basicPTY/scanner"
 )
 
-func help() Cmd {
-	return Cmd{
+func init() {
+	_ = Register(Base{
 		Name: "help",
 		Help: "Shows available commands",
-		Action: func(w io.Writer, args ...string) error {
-			printer.Print(w, "Available commands:\n")
-			for _, c := range Commands() {
-				printer.Print(w, " - %-15s %s\n", c.Name, c.Help)
+		Action: func(input io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+			printer.Print(output, "Available commands:\n")
+			for _, c := range commands {
+				printer.Print(output, " - %-15s %s\n", c.GetName(), c.GetHelp())
 			}
 			return nil
 		},
-	}
+	})
 }

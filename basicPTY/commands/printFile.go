@@ -5,30 +5,34 @@ import (
 	"io"
 	"os"
 	"pty-go/basicPTY/printer"
+	"pty-go/basicPTY/scanner"
 )
 
-func printFile() Cmd {
-	return Cmd{
-		Name: "sf",
-		Help: "Shows the content of a file, we need the path",
-		Action: func(w io.Writer, args ...string) error {
-			if len(args) != 1 {
-				printer.Print(w, "Please specify one file!")
-				return nil
-			}
+func init() {
+	_ = Register(Base{
+		Name:   "sf",
+		Help:   "Shows the content of a file, we need the path",
+		Action: showFile,
+	})
+}
 
-			f, err := os.Open(args[0])
-			if err != nil {
-				printer.Print(w, "Cannot open %s: %s\n", args[0], err)
-			}
-			defer f.Close()
-
-			if _, err := io.Copy(w, f); err != nil {
-				printer.Print(w, "Cannot print %s: %s\n", args[0], err)
-				return err
-			}
-			_, _ = fmt.Fprintln(w)
-			return nil
-		},
+func showFile(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+	if scanner.Len() != 1 {
+		printer.Print(output, "Please specify one file!")
+		return nil
 	}
+
+	args := scanner.Args()
+	f, err := os.Open(args[0])
+	if err != nil {
+		printer.Print(output, "Cannot open %s: %s\n", args[0], err)
+	}
+	defer f.Close()
+
+	if _, err := io.Copy(output, f); err != nil {
+		printer.Print(output, "Cannot print %s: %s\n", args[0], err)
+		return err
+	}
+	_, _ = fmt.Fprintln(output)
+	return nil
 }
