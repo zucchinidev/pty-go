@@ -8,6 +8,7 @@ import (
 type ArgsScanner interface {
 	Len() int
 	Args() []string
+	LenArgs() int
 	CMD() string
 }
 
@@ -52,6 +53,10 @@ func (a *argsScanner) Args() []string {
 	}
 
 	return []string{}
+}
+
+func (a *argsScanner) LenArgs() int {
+	return len(a.Args())
 }
 
 func (a *argsScanner) CMD() string {

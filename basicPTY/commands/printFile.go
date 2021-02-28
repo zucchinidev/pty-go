@@ -16,10 +16,10 @@ func init() {
 	})
 }
 
-func showFile(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+func showFile(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (exit bool) {
 	if scanner.Len() != 1 {
 		printer.Print(output, "Please specify one file!")
-		return nil
+		return
 	}
 
 	args := scanner.Args()
@@ -31,8 +31,8 @@ func showFile(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err e
 
 	if _, err := io.Copy(output, f); err != nil {
 		printer.Print(output, "Cannot print %s: %s\n", args[0], err)
-		return err
+		return
 	}
 	_, _ = fmt.Fprintln(output)
-	return nil
+	return
 }

@@ -17,7 +17,7 @@ func init() {
 	})
 }
 
-func shuffleParams(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (err error) {
+func shuffleParams(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (exit bool) {
 	args := scanner.Args()
 	rand.Shuffle(len(args), func(i, j int) { args[i], args[j] = args[j], args[i] })
 	for i := range args {
@@ -34,5 +34,5 @@ func shuffleParams(_ io.Reader, output io.Writer, scanner scanner.ArgsScanner) (
 		f(output, "%s", args[i])
 	}
 	_, _ = fmt.Fprintln(output)
-	return nil
+	return
 }
